@@ -5,12 +5,11 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.exifinterface.media.ExifInterface
+import com.example.aimetadatacleaner.data.model.AiGenerationMetadata
 import com.example.aimetadatacleaner.data.model.ImageInspectionResult
 import com.example.aimetadatacleaner.data.model.MetadataCategory
 import com.example.aimetadatacleaner.data.model.MetadataEntry
 import com.example.aimetadatacleaner.data.model.PrivacyRisk
-import java.io.InputStream
-import java.nio.charset.StandardCharsets
 
 object MetadataExtractor {
 
@@ -57,41 +56,166 @@ object MetadataExtractor {
         var hasAiMetadata = false
         var hasGpsLocation = false
         var rawPromptText: String? = null
+        var aiMetadata: AiGenerationMetadata? = null
+
+        var exifComment: String? = null
+        var exifDescription: String? = null
+        var exifSoftware: String? = null
 
         // 1. Read EXIF via AndroidX ExifInterface
         try {
             context.contentResolver.openInputStream(uri)?.use { stream ->
                 val exif = ExifInterface(stream)
+                exifComment = exif.getAttribute(ExifInterface.TAG_USER_COMMENT)
+                exifDescription = exif.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION)
+                exifSoftware = exif.getAttribute(ExifInterface.TAG_SOFTWARE)
                 extractExifEntries(exif, entries)
             }
         } catch (_: Exception) {
         }
 
-        // 2. Deep scan for AI metadata chunks (PNG tEXt/iTXt, XMP, C2PA, ComfyUI, WebUI parameters)
+        // 2. Deep scan for AI metadata chunks and parameters
         try {
             context.contentResolver.openInputStream(uri)?.use { stream ->
-                val aiScan = scanForAiMetadata(stream)
-                if (aiScan.aiEntries.isNotEmpty()) {
-                    entries.addAll(aiScan.aiEntries)
-                    hasAiMetadata = true
-                    if (aiScan.promptText != null) {
-                        rawPromptText = aiScan.promptText
-                    }
-                }
+                val scans = AiMetadataParser.scanStreamForAiPayloads(stream)
+                aiMetadata = AiMetadataParser.parseAiMetadata(
+                    scans = scans,
+                    exifComment = exifComment,
+                    exifDescription = exifDescription,
+                    exifSoftware = exifSoftware
+                )
             }
         } catch (_: Exception) {
         }
 
-        // Check EXIF entries for AI prompts or GPS
+        // If AI metadata parsed, populate structured entries
+        aiMetadata?.let { ai ->
+            hasAiMetadata = true
+            rawPromptText = ai.positivePrompt ?: ai.rawParametersText
+
+            entries.add(
+                MetadataEntry(
+                    category = MetadataCategory.AI_PROVENANCE,
+                    key = "AI Generator Engine",
+                    value = ai.detectedEngine,
+                    isSensitive = true,
+                    description = "Detected generative AI tool or framework"
+                )
+            )
+
+            ai.positivePrompt?.let {
+                entries.add(
+                    MetadataEntry(
+                        category = MetadataCategory.AI_PROVENANCE,
+                        key = "AI Positive Prompt",
+                        value = it,
+                        isSensitive = true,
+                        description = "Text prompt used to create this image"
+                    )
+                )
+            }
+
+            ai.negativePrompt?.let {
+                entries.add(
+                    MetadataEntry(
+                        category = MetadataCategory.AI_PROVENANCE,
+                        key = "AI Negative Prompt",
+                        value = it,
+                        isSensitive = true,
+                        description = "Excluded attributes/negative constraints"
+                    )
+                )
+            }
+
+            ai.model?.let {
+                entries.add(
+                    MetadataEntry(
+                        category = MetadataCategory.AI_PROVENANCE,
+                        key = "AI Model Checkpoint",
+                        value = it,
+                        isSensitive = true,
+                        description = "Base neural network weights or checkpoint"
+                    )
+                )
+            }
+
+            ai.seed?.let {
+                entries.add(
+                    MetadataEntry(
+                        category = MetadataCategory.AI_PROVENANCE,
+                        key = "Generation Seed",
+                        value = it,
+                        isSensitive = true,
+                        description = "Deterministic random seed"
+                    )
+                )
+            }
+
+            ai.steps?.let {
+                entries.add(
+                    MetadataEntry(
+                        category = MetadataCategory.AI_PROVENANCE,
+                        key = "Inference Steps",
+                        value = it,
+                        isSensitive = false,
+                        description = "Diffusion sampling iteration count"
+                    )
+                )
+            }
+
+            ai.sampler?.let {
+                entries.add(
+                    MetadataEntry(
+                        category = MetadataCategory.AI_PROVENANCE,
+                        key = "Sampler / Scheduler",
+                        value = it,
+                        isSensitive = false,
+                        description = "Diffusion noise scheduler"
+                    )
+                )
+            }
+
+            ai.cfgScale?.let {
+                entries.add(
+                    MetadataEntry(
+                        category = MetadataCategory.AI_PROVENANCE,
+                        key = "CFG Guidance Scale",
+                        value = it,
+                        isSensitive = false,
+                        description = "Prompt adherence multiplier"
+                    )
+                )
+            }
+
+            if (ai.loras.isNotEmpty()) {
+                entries.add(
+                    MetadataEntry(
+                        category = MetadataCategory.AI_PROVENANCE,
+                        key = "LoRA Fine-Tunes",
+                        value = ai.loras.joinToString(", "),
+                        isSensitive = true,
+                        description = "Low-Rank Adaptation models"
+                    )
+                )
+            }
+
+            ai.metaTagsInvolved.forEach { tag ->
+                entries.add(
+                    MetadataEntry(
+                        category = MetadataCategory.AI_PROVENANCE,
+                        key = "AI Meta Tag Involved",
+                        value = tag,
+                        isSensitive = true,
+                        description = "Physical container or chunk holding AI parameters"
+                    )
+                )
+            }
+        }
+
+        // Check for GPS
         for (entry in entries) {
             if (entry.category == MetadataCategory.LOCATION && entry.isSensitive) {
                 hasGpsLocation = true
-            }
-            if (entry.category == MetadataCategory.AI_PROVENANCE) {
-                hasAiMetadata = true
-                if (rawPromptText == null && entry.key.contains("Prompt", ignoreCase = true)) {
-                    rawPromptText = entry.value
-                }
             }
         }
 
@@ -107,7 +231,7 @@ object MetadataExtractor {
                 PrivacyRisk.MEDIUM
             }
             entries.any { it.isSensitive } -> {
-                riskReasons.add("Hardware identifiers or serial numbers detected")
+                riskReasons.add("Hardware identifiers or camera serial numbers detected")
                 PrivacyRisk.MEDIUM
             }
             entries.isNotEmpty() -> {
@@ -132,7 +256,8 @@ object MetadataExtractor {
             riskReasons = riskReasons,
             hasAiMetadata = hasAiMetadata,
             hasGpsLocation = hasGpsLocation,
-            rawPromptText = rawPromptText
+            rawPromptText = rawPromptText,
+            aiMetadata = aiMetadata
         )
     }
 
@@ -267,157 +392,5 @@ object MetadataExtractor {
                 )
             )
         }
-        exif.getAttribute(ExifInterface.TAG_SOFTWARE)?.let {
-            val isAiSoftware = isAiToolName(it)
-            list.add(
-                MetadataEntry(
-                    category = if (isAiSoftware) MetadataCategory.AI_PROVENANCE else MetadataCategory.AUTHOR_SYSTEM,
-                    key = if (isAiSoftware) "AI Generation Engine" else "Software / Tool",
-                    value = it,
-                    isSensitive = isAiSoftware
-                )
-            )
-        }
-
-        // Check UserComment and ImageDescription for AI Prompts
-        exif.getAttribute(ExifInterface.TAG_USER_COMMENT)?.let { comment ->
-            if (comment.isNotBlank()) {
-                val isAi = looksLikeAiPrompt(comment)
-                list.add(
-                    MetadataEntry(
-                        category = if (isAi) MetadataCategory.AI_PROVENANCE else MetadataCategory.AUTHOR_SYSTEM,
-                        key = if (isAi) "AI Prompt / Parameters" else "User Comment",
-                        value = comment,
-                        isSensitive = isAi
-                    )
-                )
-            }
-        }
-        exif.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION)?.let { desc ->
-            if (desc.isNotBlank()) {
-                val isAi = looksLikeAiPrompt(desc)
-                list.add(
-                    MetadataEntry(
-                        category = if (isAi) MetadataCategory.AI_PROVENANCE else MetadataCategory.AUTHOR_SYSTEM,
-                        key = if (isAi) "AI Generation Description" else "Image Description",
-                        value = desc,
-                        isSensitive = isAi
-                    )
-                )
-            }
-        }
-    }
-
-    private data class AiScanResult(
-        val aiEntries: List<MetadataEntry>,
-        val promptText: String?
-    )
-
-    private fun scanForAiMetadata(stream: InputStream): AiScanResult {
-        val entries = mutableListOf<MetadataEntry>()
-        var foundPrompt: String? = null
-
-        val buffer = ByteArray(256 * 1024) // Read up to first 256KB for header chunks
-        val bytesRead = stream.read(buffer)
-        if (bytesRead <= 0) return AiScanResult(emptyList(), null)
-
-        val content = String(buffer, 0, bytesRead, StandardCharsets.ISO_8859_1)
-
-        // 1. Automatic1111 / WebUI parameters
-        if (content.contains("parameters", ignoreCase = true) || content.contains("Negative prompt:", ignoreCase = true)) {
-            val paramIdx = content.indexOf("parameters")
-            if (paramIdx != -1) {
-                val sub = content.substring(paramIdx, minOf(content.length, paramIdx + 2000))
-                val cleanText = extractReadableText(sub)
-                entries.add(
-                    MetadataEntry(
-                        category = MetadataCategory.AI_PROVENANCE,
-                        key = "Stable Diffusion / WebUI Parameters",
-                        value = cleanText.take(500),
-                        isSensitive = true
-                    )
-                )
-                foundPrompt = cleanText
-            }
-        }
-
-        // 2. Midjourney or DALL-E tags
-        if (content.contains("Midjourney", ignoreCase = true)) {
-            entries.add(
-                MetadataEntry(
-                    category = MetadataCategory.AI_PROVENANCE,
-                    key = "AI Generator",
-                    value = "Midjourney (Identified from embedded signatures)",
-                    isSensitive = true
-                )
-            )
-        }
-        if (content.contains("DALL-E", ignoreCase = true) || content.contains("openai", ignoreCase = true)) {
-            entries.add(
-                MetadataEntry(
-                    category = MetadataCategory.AI_PROVENANCE,
-                    key = "AI Generator",
-                    value = "OpenAI DALL-E / ChatGPT Image",
-                    isSensitive = true
-                )
-            )
-        }
-
-        // 3. ComfyUI workflow
-        if (content.contains("\"prompt\":", ignoreCase = true) || content.contains("\"workflow\":", ignoreCase = true)) {
-            entries.add(
-                MetadataEntry(
-                    category = MetadataCategory.AI_PROVENANCE,
-                    key = "ComfyUI Workflow Metadata",
-                    value = "Embedded Node Graph & Prompt JSON detected",
-                    isSensitive = true
-                )
-            )
-        }
-
-        // 4. C2PA / Content Credentials manifest
-        if (content.contains("c2pa", ignoreCase = true) || content.contains("claim_generator", ignoreCase = true)) {
-            entries.add(
-                MetadataEntry(
-                    category = MetadataCategory.AI_PROVENANCE,
-                    key = "C2PA Content Credentials",
-                    value = "Cryptographic provenance manifest detected",
-                    isSensitive = true
-                )
-            )
-        }
-
-        return AiScanResult(entries, foundPrompt)
-    }
-
-    private fun isAiToolName(tool: String): Boolean {
-        val lower = tool.lowercase()
-        return lower.contains("stable diffusion") ||
-                lower.contains("midjourney") ||
-                lower.contains("comfyui") ||
-                lower.contains("dall-e") ||
-                lower.contains("novelai") ||
-                lower.contains("flux") ||
-                lower.contains("leonardo") ||
-                lower.contains("adobe firefly")
-    }
-
-    private fun looksLikeAiPrompt(text: String): Boolean {
-        val lower = text.lowercase()
-        return lower.contains("steps:") ||
-                lower.contains("sampler:") ||
-                lower.contains("cfg scale:") ||
-                lower.contains("seed:") ||
-                lower.contains("negative prompt:") ||
-                lower.contains("model:") ||
-                lower.contains("lora:") ||
-                lower.contains("midjourney") ||
-                lower.contains("--v ") ||
-                lower.contains("--ar ")
-    }
-
-    private fun extractReadableText(raw: String): String {
-        return raw.filter { it.code in 32..126 || it == '\n' || it == '\r' || it == '\t' }
-            .trim()
     }
 }

@@ -32,6 +32,12 @@ data class BatchProgressState(
     val completedResults: List<CleanExecutionResult> = emptyList()
 )
 
+data class BatchItemInspection(
+    val uri: Uri,
+    val inspection: ImageInspectionResult? = null,
+    val isInspecting: Boolean = false
+)
+
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = (application as MetaCleanApplication).repository
     private val prefs = application.getSharedPreferences("metaclean_settings", Context.MODE_PRIVATE)
@@ -80,6 +86,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _batchUris = MutableStateFlow<List<Uri>>(emptyList())
     val batchUris: StateFlow<List<Uri>> = _batchUris.asStateFlow()
+
+    private val _batchInspections = MutableStateFlow<List<BatchItemInspection>>(emptyList())
+    val batchInspections: StateFlow<List<BatchItemInspection>> = _batchInspections.asStateFlow()
 
     private val _batchState = MutableStateFlow(BatchProgressState())
     val batchState: StateFlow<BatchProgressState> = _batchState.asStateFlow()
@@ -153,6 +162,22 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setBatchUris(uris: List<Uri>) {
         _batchUris.value = uris
         _batchState.value = BatchProgressState(total = uris.size)
+        _batchInspections.value = uris.map { BatchItemInspection(uri = it, isInspecting = true) }
+
+        viewModelScope.launch {
+            val currentList = uris.map { BatchItemInspection(uri = it, isInspecting = true) }.toMutableList()
+            for ((index, uri) in uris.withIndex()) {
+                val result = withContext(Dispatchers.IO) {
+                    try {
+                        repository.inspectImage(uri)
+                    } catch (_: Exception) {
+                        null
+                    }
+                }
+                currentList[index] = BatchItemInspection(uri = uri, inspection = result, isInspecting = false)
+                _batchInspections.value = currentList.toList()
+            }
+        }
     }
 
     fun startBatchCleaning() {

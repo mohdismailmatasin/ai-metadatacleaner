@@ -58,6 +58,7 @@ import com.example.aimetadatacleaner.R
 import com.example.aimetadatacleaner.data.model.ImageInspectionResult
 import com.example.aimetadatacleaner.data.model.MetadataCategory
 import com.example.aimetadatacleaner.data.model.PrivacyRisk
+import com.example.aimetadatacleaner.ui.components.AiMetadataInspectorCard
 import com.example.aimetadatacleaner.ui.MainViewModel
 import com.example.aimetadatacleaner.ui.components.CategorySectionCard
 import com.example.aimetadatacleaner.ui.components.CleaningOptionToggle
@@ -144,11 +145,12 @@ fun HomeScreen(
                 ImageInspectionCard(inspection = inspection!!)
             }
 
-            // High priority warning if AI prompts or GPS found
-            if (inspection!!.hasAiMetadata && inspection!!.rawPromptText != null) {
-                item {
-                    AiPromptLeakageCard(promptText = inspection!!.rawPromptText!!)
-                }
+            // Deep AI Meta Tags & Generation Parameters Breakdown
+            item {
+                AiMetadataInspectorCard(
+                    aiMetadata = inspection!!.aiMetadata,
+                    onCopyFeedback = { viewModel.showToast(it) }
+                )
             }
 
             // Risk Assessment Card

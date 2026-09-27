@@ -25,6 +25,22 @@ data class MetadataEntry(
     val description: String = ""
 )
 
+data class AiGenerationMetadata(
+    val detectedEngine: String,
+    val positivePrompt: String? = null,
+    val negativePrompt: String? = null,
+    val steps: String? = null,
+    val sampler: String? = null,
+    val cfgScale: String? = null,
+    val seed: String? = null,
+    val model: String? = null,
+    val dimensions: String? = null,
+    val loras: List<String> = emptyList(),
+    val otherParameters: Map<String, String> = emptyMap(),
+    val rawParametersText: String? = null,
+    val metaTagsInvolved: List<String> = emptyList()
+)
+
 data class ImageInspectionResult(
     val uri: Uri,
     val fileName: String,
@@ -37,5 +53,6 @@ data class ImageInspectionResult(
     val riskReasons: List<String>,
     val hasAiMetadata: Boolean,
     val hasGpsLocation: Boolean,
-    val rawPromptText: String? = null
+    val rawPromptText: String? = null,
+    val aiMetadata: AiGenerationMetadata? = null
 )
