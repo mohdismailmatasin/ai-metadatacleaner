@@ -9,7 +9,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.aistudio.aimetadatacleaner.app"
+        applicationId = "com.aistudio.aimetadatacleaner.cleaner"
         minSdk = 26
         targetSdk = 36
         versionCode = 3
