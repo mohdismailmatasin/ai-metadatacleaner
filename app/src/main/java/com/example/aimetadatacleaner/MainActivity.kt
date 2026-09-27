@@ -5,10 +5,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.aimetadatacleaner.ui.AppThemeMode
@@ -33,6 +35,29 @@ class MainActivity : ComponentActivity() {
                 AppThemeMode.LIGHT -> false
                 AppThemeMode.DARK -> true
             }
+
+            DisposableEffect(isDark) {
+                enableEdgeToEdge(
+                    statusBarStyle = if (isDark) {
+                        SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+                    } else {
+                        SystemBarStyle.light(
+                            android.graphics.Color.TRANSPARENT,
+                            android.graphics.Color.TRANSPARENT
+                        )
+                    },
+                    navigationBarStyle = if (isDark) {
+                        SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+                    } else {
+                        SystemBarStyle.light(
+                            android.graphics.Color.TRANSPARENT,
+                            android.graphics.Color.TRANSPARENT
+                        )
+                    }
+                )
+                onDispose {}
+            }
+
             AIMetadataCleanerTheme(darkTheme = isDark) {
                 MainScreen(viewModel = viewModel)
             }
