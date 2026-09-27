@@ -355,29 +355,50 @@ fun SettingsScreen(viewModel: MainViewModel) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // QR Code Card with clean contrast background
+                    // QR Code Card styled as Malaysia National QR card
                     Surface(
                         shape = RoundedCornerShape(16.dp),
                         color = Color.White,
                         shadowElevation = 3.dp,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0)),
+                        border = androidx.compose.foundation.BorderStroke(1.5.dp, Color(0xFFE11D48).copy(alpha = 0.6f)),
                         modifier = Modifier
-                            .size(220.dp)
+                            .size(230.dp)
                             .clickable { showQrDialog = true }
                             .testTag("qr_donation_image")
                     ) {
-                        Box(
+                        Column(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.donate_qr),
-                                contentDescription = "Donation QR Code",
+                            Box(
                                 modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(8.dp),
-                                contentScale = ContentScale.Fit
-                            )
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.donate_qr),
+                                    contentDescription = "Malaysia National QR Code",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(8.dp),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
+                            Surface(
+                                color = Color(0xFFE11D48),
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(bottomStart = 14.dp, bottomEnd = 14.dp)
+                            ) {
+                                Text(
+                                    text = "MALAYSIA NATIONAL QR",
+                                    color = Color.White,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(vertical = 6.dp)
+                                )
+                            }
                         }
                     }
 
@@ -531,36 +552,62 @@ fun SettingsScreen(viewModel: MainViewModel) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Full QR Code Card matching the attached image
+                    // Full QR Code Card matching the Malaysia National QR card
                     Surface(
                         shape = RoundedCornerShape(20.dp),
                         color = Color.White,
-                        shadowElevation = 3.dp,
-                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0)),
+                        shadowElevation = 4.dp,
+                        border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFFE11D48)),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f)
+                            .aspectRatio(0.9f)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.donate_qr),
-                            contentDescription = "Full size donation QR code",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(12.dp),
-                            contentScale = ContentScale.Fit
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.donate_qr),
+                                    contentDescription = "Full size donation QR code",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(12.dp),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
+                            Surface(
+                                color = Color(0xFFE11D48),
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp)
+                            ) {
+                                Text(
+                                    text = "MALAYSIA NATIONAL QR",
+                                    color = Color.White,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                )
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(14.dp))
 
                     Text(
-                        text = "Recipient: Mohd Ismail Mat Asin",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
+                        text = "Recipient: MOHD ISMAIL BIN MAT ASIN",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Scan with Touch 'n Go or any Malaysian banking app",
+                        text = "Scan with Maybank MAE, CIMB OCTO, TNG eWallet, ShopeePay or any banking app",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center

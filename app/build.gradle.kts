@@ -73,3 +73,27 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 }
+
+tasks.register("importUploadedQr") {
+    doLast {
+        val searchDirs = listOf(rootDir, projectDir, file("${projectDir}/src/main/res/drawable"))
+        val candidateNames = listOf("QR.png", "qr.png", "QR.jpg", "qr.jpg", "QR.jpeg", "qr.jpeg", "donate_qr.jpg", "donate_qr.jpeg")
+        val target = file("${projectDir}/src/main/res/drawable/donate_qr.png")
+        for (dir in searchDirs) {
+            for (name in candidateNames) {
+                val candidate = file("$dir/$name")
+                if (candidate.exists() && candidate.absolutePath != target.absolutePath) {
+                    println("Automatically imported uploaded QR: ${candidate.name} -> donate_qr.png")
+                    candidate.copyTo(target, overwrite = true)
+                    candidate.delete()
+                    return@doLast
+                }
+            }
+        }
+    }
+}
+
+tasks.matching { it.name.startsWith("pre") || it.name.startsWith("merge") }.configureEach {
+    dependsOn("importUploadedQr")
+}
+
