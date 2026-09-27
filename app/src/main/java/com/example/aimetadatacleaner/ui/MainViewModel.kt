@@ -1,6 +1,7 @@
 package com.example.aimetadatacleaner.ui
 
 import android.app.Application
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +19,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+enum class AppThemeMode(val title: String, val subtitle: String) {
+    SYSTEM("System Default", "Follows device dark/light setting"),
+    LIGHT("Light Mode", "Crisp daylight high-contrast theme"),
+    DARK("Dark Mode", "Deep slate OLED privacy dark theme")
+}
+
 data class BatchProgressState(
     val isRunning: Boolean = false,
     val current: Int = 0,
@@ -27,6 +34,22 @@ data class BatchProgressState(
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = (application as MetaCleanApplication).repository
+    private val prefs = application.getSharedPreferences("metaclean_settings", Context.MODE_PRIVATE)
+
+    private val _themeMode = MutableStateFlow(
+        try {
+            AppThemeMode.valueOf(prefs.getString("theme_mode", AppThemeMode.DARK.name) ?: AppThemeMode.DARK.name)
+        } catch (_: Exception) {
+            AppThemeMode.DARK
+        }
+    )
+    val themeMode: StateFlow<AppThemeMode> = _themeMode.asStateFlow()
+
+    fun setThemeMode(mode: AppThemeMode) {
+        _themeMode.value = mode
+        prefs.edit().putString("theme_mode", mode.name).apply()
+        showToast("Theme changed to ${mode.title}")
+    }
 
     val historyRecords: StateFlow<List<CleanedRecordEntity>> = repository.allRecords
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -173,6 +196,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             repository.clearHistory()
             _toastMessage.value = "History cleared."
         }
+    }
+
+    fun showToast(message: String) {
+        _toastMessage.value = message
     }
 
     fun dismissToast() {

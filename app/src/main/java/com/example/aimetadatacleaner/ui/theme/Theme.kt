@@ -7,6 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -34,28 +35,28 @@ private val DarkColorScheme = darkColorScheme(
 
 private val LightColorScheme = lightColorScheme(
     primary = CyanAccentDark,
-    onPrimary = Slate100,
-    primaryContainer = Slate200,
-    onPrimaryContainer = Slate900,
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFE0F2FE),
+    onPrimaryContainer = Color(0xFF0369A1),
     secondary = IndigoAccent,
-    onSecondary = Slate100,
-    secondaryContainer = Slate100,
-    onSecondaryContainer = Slate900,
+    onSecondary = Color.White,
+    secondaryContainer = Color(0xFFEEF2FF),
+    onSecondaryContainer = Color(0xFF3730A3),
     tertiary = EmeraldSuccess,
-    onTertiary = Slate100,
-    background = Slate100,
+    onTertiary = Color.White,
+    background = Color(0xFFF8FAFC),
     onBackground = Slate900,
-    surface = Slate200,
+    surface = Color.White,
     onSurface = Slate900,
-    surfaceVariant = Slate200,
-    onSurfaceVariant = Slate700,
-    outline = Slate400,
-    outlineVariant = Slate200
+    surfaceVariant = Color(0xFFF1F5F9),
+    onSurfaceVariant = Color(0xFF475569),
+    outline = Color(0xFFCBD5E1),
+    outlineVariant = Color(0xFFE2E8F0)
 )
 
 @Composable
 fun AIMetadataCleanerTheme(
-    darkTheme: Boolean = true, // Default to sleek privacy dark theme
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
@@ -64,7 +65,7 @@ fun AIMetadataCleanerTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.background.toArgb()
-            window.navigationBarColor = colorScheme.background.toArgb()
+            window.navigationBarColor = colorScheme.surface.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
             WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
         }
