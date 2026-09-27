@@ -1,0 +1,8 @@
+{
+  "name": "AI Metadata Cleaner",
+  "description": "Inspect and strip AI prompts, EXIF, GPS coordinates, device info, and private metadata from your images.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
