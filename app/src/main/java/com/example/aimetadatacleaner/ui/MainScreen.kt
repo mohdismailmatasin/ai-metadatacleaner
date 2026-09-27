@@ -111,19 +111,6 @@ fun MainScreen(viewModel: MainViewModel) {
                         )
                     }
                 },
-                actions = {
-                    IconButton(
-                        onClick = { selectedTab = NavigationTab.SETTINGS },
-                        modifier = Modifier.testTag("action_settings")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            tint = if (selectedTab == NavigationTab.SETTINGS) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.onSurface

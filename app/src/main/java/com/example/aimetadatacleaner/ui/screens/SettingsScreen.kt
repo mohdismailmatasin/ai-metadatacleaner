@@ -180,10 +180,10 @@ fun SettingsScreen(viewModel: MainViewModel) {
             }
         }
 
-        // 2. ABOUT SECTION
+        // 2. DEVELOPER CONTACT SECTION
         item {
             Text(
-                text = "About & Developer",
+                text = "Contact Developer",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -209,7 +209,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Info,
+                                imageVector = Icons.Default.Email,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(20.dp)
@@ -218,41 +218,17 @@ fun SettingsScreen(viewModel: MainViewModel) {
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Legal & Attribution",
+                                text = "Developer Inquiry & Feedback",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Developer & Ownership Information",
+                                text = developerEmail,
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Mandatory Copyright Notice
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
-                        border = androidx.compose.foundation.BorderStroke(
-                            1.dp,
-                            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = copyrightNotice,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium,
-                            lineHeight = 19.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier
-                                .padding(14.dp)
-                                .testTag("text_copyright_notice")
-                        )
                     }
 
                     Spacer(modifier = Modifier.height(14.dp))
@@ -437,9 +413,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
         // 4. PRIVACY PRINCIPLES CARD
         item {
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 24.dp),
+                modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
             ) {
@@ -467,6 +441,27 @@ fun SettingsScreen(viewModel: MainViewModel) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
+            }
+        }
+
+        // 5. ALL RIGHTS RESERVED (BOTTOM CENTER)
+        item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp, bottom = 28.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = copyrightNotice,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                    textAlign = TextAlign.Center,
+                    lineHeight = 17.sp,
+                    modifier = Modifier
+                        .fillMaxWidth(0.92f)
+                        .testTag("text_copyright_notice")
+                )
             }
         }
     }

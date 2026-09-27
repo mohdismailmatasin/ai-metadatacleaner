@@ -102,6 +102,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         inspectCurrentUri(uri)
     }
 
+    fun clearSelection() {
+        _selectedUri.value = null
+        _inspectionResult.value = null
+        _cleanResult.value = null
+    }
+
     private fun inspectCurrentUri(uri: Uri) {
         viewModelScope.launch {
             _isInspecting.value = true
