@@ -125,7 +125,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "Version 1.0 (2026)",
+                            text = "Version 1.1 (2026)",
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold
