@@ -28,9 +28,6 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Warning
@@ -422,66 +419,30 @@ fun CleanHeroSection(
             // Top Privacy Shield Badge
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(CyanAccent.copy(alpha = 0.12f))
-                            .border(1.dp, CyanAccent.copy(alpha = 0.4f), CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Shield,
-                            contentDescription = "Shield",
-                            tint = CyanAccent,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column {
-                        Text(
-                            text = "AI Metadata Cleaner",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = "100% On-Device Privacy Shield",
-                            fontSize = 12.sp,
-                            color = EmeraldSuccess,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                }
-
-                Surface(
-                    shape = RoundedCornerShape(20.dp),
-                    color = Slate950,
-                    border = BorderStroke(1.dp, Slate800)
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(CyanAccent.copy(alpha = 0.12f))
+                        .border(1.dp, CyanAccent.copy(alpha = 0.4f), CircleShape),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .clip(CircleShape)
-                                .background(EmeraldSuccess)
-                        )
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(
-                            text = "Offline",
-                            fontSize = 11.sp,
-                            color = Slate400,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Shield,
+                        contentDescription = "Shield",
+                        tint = CyanAccent,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = "100% On-Device Privacy Shield",
+                    fontSize = 14.sp,
+                    color = EmeraldSuccess,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -516,48 +477,6 @@ fun CleanHeroSection(
                 color = Slate400,
                 lineHeight = 18.sp
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 2x2 Feature Highlights
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    FeaturePill(
-                        icon = Icons.Default.AutoAwesome,
-                        title = "AI Prompts & Seeds",
-                        subtitle = "Midjourney, SD, ComfyUI",
-                        modifier = Modifier.weight(1f)
-                    )
-                    FeaturePill(
-                        icon = Icons.Default.LocationOn,
-                        title = "GPS Coordinates",
-                        subtitle = "Latitude, longitude, altitude",
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    FeaturePill(
-                        icon = Icons.Default.PhotoCamera,
-                        title = "Camera Specs",
-                        subtitle = "Device model & serial",
-                        modifier = Modifier.weight(1f)
-                    )
-                    FeaturePill(
-                        icon = Icons.Default.Lock,
-                        title = "Zero Cloud Leak",
-                        subtitle = "Processed 100% locally",
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -596,49 +515,6 @@ fun CleanHeroSection(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
-        }
-    }
-}
-
-@Composable
-private fun FeaturePill(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        color = Slate950,
-        border = BorderStroke(1.dp, Slate800)
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = CyanAccent,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
-                Text(
-                    text = title,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1
-                )
-                Text(
-                    text = subtitle,
-                    fontSize = 10.sp,
-                    color = Slate400,
-                    maxLines = 1
-                )
-            }
         }
     }
 }
