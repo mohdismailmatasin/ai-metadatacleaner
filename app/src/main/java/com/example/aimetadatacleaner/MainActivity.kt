@@ -8,6 +8,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.aimetadatacleaner.ui.AppThemeMode
 import com.example.aimetadatacleaner.ui.MainScreen
 import com.example.aimetadatacleaner.ui.MainViewModel
 import com.example.aimetadatacleaner.ui.theme.AIMetadataCleanerTheme
@@ -23,7 +27,13 @@ class MainActivity : ComponentActivity() {
         handleSharedIntent(intent)
 
         setContent {
-            AIMetadataCleanerTheme {
+            val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+            val isDark = when (themeMode) {
+                AppThemeMode.SYSTEM -> isSystemInDarkTheme()
+                AppThemeMode.LIGHT -> false
+                AppThemeMode.DARK -> true
+            }
+            AIMetadataCleanerTheme(darkTheme = isDark) {
                 MainScreen(viewModel = viewModel)
             }
         }

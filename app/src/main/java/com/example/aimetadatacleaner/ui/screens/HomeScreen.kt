@@ -58,6 +58,7 @@ import com.example.aimetadatacleaner.R
 import com.example.aimetadatacleaner.data.model.ImageInspectionResult
 import com.example.aimetadatacleaner.data.model.MetadataCategory
 import com.example.aimetadatacleaner.data.model.PrivacyRisk
+import com.example.aimetadatacleaner.ui.components.AiMetadataInspectorCard
 import com.example.aimetadatacleaner.ui.MainViewModel
 import com.example.aimetadatacleaner.ui.components.CategorySectionCard
 import com.example.aimetadatacleaner.ui.components.CleaningOptionToggle
@@ -115,7 +116,7 @@ fun HomeScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Slate900),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Row(
@@ -144,11 +145,12 @@ fun HomeScreen(
                 ImageInspectionCard(inspection = inspection!!)
             }
 
-            // High priority warning if AI prompts or GPS found
-            if (inspection!!.hasAiMetadata && inspection!!.rawPromptText != null) {
-                item {
-                    AiPromptLeakageCard(promptText = inspection!!.rawPromptText!!)
-                }
+            // Deep AI Meta Tags & Generation Parameters Breakdown
+            item {
+                AiMetadataInspectorCard(
+                    aiMetadata = inspection!!.aiMetadata,
+                    onCopyFeedback = { viewModel.showToast(it) }
+                )
             }
 
             // Risk Assessment Card
@@ -300,7 +302,7 @@ fun HeaderSection(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Slate900),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
         border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(Slate800))
     ) {
@@ -373,7 +375,7 @@ fun HeaderSection(
 fun ImageInspectionCard(inspection: ImageInspectionResult) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Slate900),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(18.dp),
         border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(Slate800))
     ) {
@@ -425,7 +427,7 @@ fun ImageInspectionCard(inspection: ImageInspectionResult) {
 fun AiPromptLeakageCard(promptText: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Slate900),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
         border = CardDefaults.outlinedCardBorder().copy(
             brush = androidx.compose.ui.graphics.SolidColor(IndigoLight)
@@ -479,7 +481,7 @@ fun AiPromptLeakageCard(promptText: String) {
 fun RiskAssessmentCard(inspection: ImageInspectionResult) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Slate900),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
         border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(Slate800))
     ) {
@@ -538,7 +540,7 @@ fun EmptyStateCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Slate900),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
         border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(Slate800))
     ) {
