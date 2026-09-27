@@ -5,10 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Matrix
-import android.graphics.Paint
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -167,80 +164,6 @@ object MetadataCleaner {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         context.startActivity(Intent.createChooser(shareIntent, "Share Cleaned Photo"))
-    }
-
-    /**
-     * Generates a sample test photo with embedded AI metadata and GPS tags
-     * so users can experience real metadata inspection and cleaning right away.
-     */
-    suspend fun createSampleAiImage(context: Context): Uri = withContext(Dispatchers.IO) {
-        val sampleFile = File(context.cacheDir, "sample_ai_photo.jpg")
-
-        // Draw a simulated AI illustration
-        val bitmap = Bitmap.createBitmap(1024, 768, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-
-        // Gradient dark cyberpunk background
-        val bgPaint = Paint().apply {
-            color = Color.rgb(15, 23, 42)
-        }
-        canvas.drawRect(0f, 0f, 1024f, 768f, bgPaint)
-
-        // Draw stylized elements
-        val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.rgb(6, 182, 212)
-        }
-        canvas.drawCircle(512f, 384f, 160f, circlePaint)
-
-        val innerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.rgb(99, 102, 241)
-        }
-        canvas.drawCircle(512f, 384f, 110f, innerPaint)
-
-        val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
-            textSize = 32f
-            textAlign = Paint.Align.CENTER
-        }
-        canvas.drawText("AI GENERATED ARTWORK", 512f, 370f, textPaint)
-        textPaint.textSize = 20f
-        textPaint.color = Color.rgb(203, 213, 225)
-        canvas.drawText("Demo Sample with Embedded AI Prompts & GPS", 512f, 410f, textPaint)
-
-        // Save as JPEG
-        FileOutputStream(sampleFile).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
-        }
-        bitmap.recycle()
-
-        // Inject EXIF attributes: AI prompt, model, camera, GPS
-        try {
-            val exif = ExifInterface(sampleFile.absolutePath)
-            exif.setAttribute(
-                ExifInterface.TAG_USER_COMMENT,
-                "Prompt: futuristic cybernetic robotic guardian glowing in neon rain, octane render 8k --ar 16:9 --v 6.0 | Negative: blurry, low quality, artifacts | Model: SDXL_Turbo_v1.0 | Seed: 94819241"
-            )
-            exif.setAttribute(
-                ExifInterface.TAG_IMAGE_DESCRIPTION,
-                "Prompt: cybernetic android in neo-tokyo cityscape, cinematic lighting"
-            )
-            exif.setAttribute(ExifInterface.TAG_SOFTWARE, "Midjourney v6.0 + Stable Diffusion XL")
-            exif.setAttribute(ExifInterface.TAG_MAKE, "Apple")
-            exif.setAttribute(ExifInterface.TAG_MODEL, "iPhone 15 Pro Max")
-            exif.setAttribute(ExifInterface.TAG_DATETIME, "2026:09:26 21:15:30")
-            exif.setAttribute(ExifInterface.TAG_ARTIST, "Digital Creator Demo")
-            exif.setAttribute(ExifInterface.TAG_COPYRIGHT, "Sample Non-Commercial CC-BY")
-            exif.setLatLong(37.7749, -122.4194) // San Francisco GPS
-            exif.setAttribute(ExifInterface.TAG_GPS_ALTITUDE, "42")
-            exif.saveAttributes()
-        } catch (_: Exception) {
-        }
-
-        FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            sampleFile
-        )
     }
 
     private fun decodeBitmap(context: Context, uri: Uri, orientation: Int): Bitmap? {

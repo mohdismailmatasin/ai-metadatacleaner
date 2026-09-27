@@ -46,10 +46,6 @@ class MetadataCleanerRepository(
         return result
     }
 
-    suspend fun createSampleImage(): Uri {
-        return MetadataCleaner.createSampleAiImage(context)
-    }
-
     suspend fun saveToGallery(filePath: String): Uri? {
         val file = File(filePath)
         if (!file.exists()) return null

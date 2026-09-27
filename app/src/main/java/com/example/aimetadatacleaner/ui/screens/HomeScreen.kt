@@ -107,8 +107,7 @@ fun HomeScreen(
                     photoPickerLauncher.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
-                },
-                onLoadSample = { viewModel.loadSampleImage() }
+                }
             )
         }
 
@@ -272,8 +271,7 @@ fun HomeScreen(
                         photoPickerLauncher.launch(
                             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                         )
-                    },
-                    onLoadSample = { viewModel.loadSampleImage() }
+                    }
                 )
             }
         }
@@ -298,8 +296,7 @@ fun HomeScreen(
 
 @Composable
 fun HeaderSection(
-    onPickPhoto: () -> Unit,
-    onLoadSample: () -> Unit
+    onPickPhoto: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -348,49 +345,25 @@ fun HeaderSection(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            Button(
+                onClick = onPickPhoto,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .testTag("pick_photo_button"),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = CyanAccent,
+                    contentColor = Slate950
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Button(
-                    onClick = onPickPhoto,
-                    modifier = Modifier
-                        .weight(1.2f)
-                        .testTag("pick_photo_button"),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CyanAccent,
-                        contentColor = Slate950
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AddPhotoAlternate,
-                        contentDescription = "Pick Photo",
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Select Photo", fontWeight = FontWeight.Bold)
-                }
-
-                OutlinedButton(
-                    onClick = onLoadSample,
-                    modifier = Modifier
-                        .weight(1f)
-                        .testTag("load_sample_button"),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = IndigoLight),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
-                        brush = androidx.compose.ui.graphics.SolidColor(IndigoLight)
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AutoAwesome,
-                        contentDescription = "Sample",
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Demo AI", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                }
+                Icon(
+                    imageVector = Icons.Default.AddPhotoAlternate,
+                    contentDescription = "Pick Photo",
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Select Photo to Inspect & Clean", fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -561,8 +534,7 @@ fun RiskAssessmentCard(inspection: ImageInspectionResult) {
 
 @Composable
 fun EmptyStateCard(
-    onPickPhoto: () -> Unit,
-    onLoadSample: () -> Unit
+    onPickPhoto: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -607,49 +579,25 @@ fun EmptyStateCard(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            Button(
+                onClick = onPickPhoto,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .testTag("empty_select_photo_button"),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = CyanAccent,
+                    contentColor = Slate950
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Button(
-                    onClick = onPickPhoto,
-                    modifier = Modifier
-                        .weight(1.3f)
-                        .testTag("empty_select_photo_button"),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = CyanAccent,
-                        contentColor = Slate950
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AddPhotoAlternate,
-                        contentDescription = "Pick photo",
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Select Photo", fontWeight = FontWeight.Bold)
-                }
-
-                OutlinedButton(
-                    onClick = onLoadSample,
-                    modifier = Modifier
-                        .weight(1f)
-                        .testTag("empty_load_sample_button"),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = IndigoLight),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
-                        brush = androidx.compose.ui.graphics.SolidColor(IndigoLight)
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AutoAwesome,
-                        contentDescription = "Demo",
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Try Demo", fontWeight = FontWeight.SemiBold)
-                }
+                Icon(
+                    imageVector = Icons.Default.AddPhotoAlternate,
+                    contentDescription = "Pick photo",
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text("Select Photo from Device", fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
         }
     }

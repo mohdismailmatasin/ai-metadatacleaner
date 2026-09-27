@@ -70,21 +70,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         inspectCurrentUri(uri)
     }
 
-    fun loadSampleImage() {
-        viewModelScope.launch {
-            _isInspecting.value = true
-            try {
-                val demoUri = repository.createSampleImage()
-                selectImage(demoUri)
-                _toastMessage.value = "Loaded demo AI artwork with embedded prompt and GPS"
-            } catch (e: Exception) {
-                _toastMessage.value = "Failed to load sample: ${e.message}"
-            } finally {
-                _isInspecting.value = false
-            }
-        }
-    }
-
     private fun inspectCurrentUri(uri: Uri) {
         viewModelScope.launch {
             _isInspecting.value = true
