@@ -1,6 +1,7 @@
 package com.example.aimetadatacleaner.ui.screens
 
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -93,7 +94,7 @@ fun HistoryScreen(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(20.dp),
-                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(Slate800))
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 Column(modifier = Modifier.padding(18.dp)) {
                     Row(
@@ -133,7 +134,7 @@ fun HistoryScreen(
                                 Icon(
                                     imageVector = Icons.Default.DeleteSweep,
                                     contentDescription = "Clear History",
-                                    tint = Slate400
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -148,13 +149,14 @@ fun HistoryScreen(
                         StatTile(
                             title = "Images Sanitized",
                             value = "$totalCount",
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            accentColor = MaterialTheme.colorScheme.primary
                         )
                         StatTile(
                             title = "Tags Wiped",
                             value = "$totalTags",
                             modifier = Modifier.weight(1f),
-                            accentColor = EmeraldSuccess
+                            accentColor = MaterialTheme.colorScheme.tertiary
                         )
                     }
                 }
@@ -167,7 +169,7 @@ fun HistoryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(16.dp),
-                    border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(Slate800))
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Column(
                         modifier = Modifier
@@ -244,13 +246,13 @@ fun StatTile(
     title: String,
     value: String,
     modifier: Modifier = Modifier,
-    accentColor: androidx.compose.ui.graphics.Color = CyanAccent
+    accentColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.primary
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(Slate800.copy(alpha = 0.5f))
-            .border(1.dp, Slate700, RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
             .padding(12.dp)
     ) {
         Column {
@@ -264,7 +266,7 @@ fun StatTile(
             Text(
                 text = title,
                 fontSize = 12.sp,
-                color = Slate400
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -287,7 +289,7 @@ fun HistoryRecordCard(
             .padding(vertical = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(14.dp),
-        border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(Slate800))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(
@@ -306,7 +308,7 @@ fun HistoryRecordCard(
                     Text(
                         text = dateStr,
                         fontSize = 11.sp,
-                        color = Slate400
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 IconButton(
@@ -316,7 +318,7 @@ fun HistoryRecordCard(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete",
-                        tint = Slate400,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -418,10 +420,8 @@ fun HistoryRecordCard(
                     },
                     modifier = Modifier.height(34.dp),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = IndigoLight),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
-                        brush = androidx.compose.ui.graphics.SolidColor(Slate700)
-                    )
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -439,8 +439,8 @@ fun HistoryRecordCard(
                     modifier = Modifier.height(34.dp),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = CyanAccent,
-                        contentColor = Slate950
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 ) {
                     Icon(
