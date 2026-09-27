@@ -340,10 +340,15 @@ fun SettingsScreen(viewModel: MainViewModel) {
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Touch 'n Go eWallet • DuitNow QR",
+                                text = "Malaysia National QR • DuitNow",
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "Maybank, CIMB, TNG, ShopeePay & all banks",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
